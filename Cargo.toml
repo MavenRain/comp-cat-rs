@@ -4,6 +4,10 @@ version = "0.1.0"
 edition = "2024"
 description = "Computational category theory in Rust: all constructions as Kan extensions"
 license = "MIT"
+repository = "https://github.com/MavenRain/comp-cat-rs"
+readme = "README.md"
+keywords = ["category-theory", "effects", "monad", "functor", "kan-extension"]
+categories = ["mathematics", "rust-patterns"]
 
 [dependencies]
 
