@@ -1,0 +1,14 @@
+[package]
+name = "comp-cat-rs"
+version = "0.1.0"
+edition = "2024"
+description = "Computational category theory in Rust: all constructions as Kan extensions"
+license = "MIT"
+
+[dependencies]
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = "warn"
+needless_pass_by_value = "warn"
+manual_map = "warn"
