@@ -8,7 +8,7 @@ The categorical foundations are formalized and proved in [comp-cat-theory](https
 
 ```toml
 [dependencies]
-comp-cat-rs = "0.1"
+comp-cat-rs = "0.2"
 ```
 
 ## Quick start
@@ -25,7 +25,7 @@ let read_env: Io<String, String> = Io::suspend(|| {
 });
 
 // Composition via flat_map
-let program: Io<String, String> = read_env.map(|home| {
+let program: Io<String, String> = read_env.flat_map(|home| {
     format!("Home directory: {home}")
 });
 
