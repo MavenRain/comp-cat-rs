@@ -1,6 +1,6 @@
 [package]
 name = "comp-cat-rs"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2024"
 description = "Computational category theory in Rust: all constructions as Kan extensions"
 license = "MIT"

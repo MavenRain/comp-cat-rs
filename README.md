@@ -26,7 +26,7 @@ let read_env: Io<String, String> = Io::suspend(|| {
 
 // Composition via flat_map
 let program: Io<String, String> = read_env.flat_map(|home| {
-    format!("Home directory: {home}")
+    Io::pure(format!("Home directory: {home}"))
 });
 
 // Nothing runs until you call .run()
