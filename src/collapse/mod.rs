@@ -14,6 +14,7 @@
 //! Free Category -> Left Adjoint (Free ⊣ Forgetful) -> Left Kan Extension
 //! Pullback      -> Limit      -> Right Kan Extension
 //! Span Comp     -> Pullback   -> Right Kan Extension
+//! Join (poset)  -> Colimit    -> Left Kan Extension
 //! ```
 //!
 //! In the Lean 4 spec, each collapse is a fully proved theorem.
@@ -25,3 +26,4 @@ pub mod monad_is_kan;
 pub mod free_category;
 pub mod limit;
 pub mod span;
+pub mod join_is_colimit;

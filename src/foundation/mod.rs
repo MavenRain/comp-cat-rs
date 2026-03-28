@@ -12,6 +12,7 @@ pub mod category;
 pub mod iso;
 pub mod nat_trans;
 pub mod monoidal;
+pub mod semilattice;
 
 pub use kind::Kind;
 pub use functor::Functor;
@@ -20,3 +21,4 @@ pub use category::Category;
 pub use iso::Iso;
 pub use nat_trans::NatTrans;
 pub use monoidal::{MonoidalCategory, Braided, Symmetric};
+pub use semilattice::JoinSemilattice;
