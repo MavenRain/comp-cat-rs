@@ -9,16 +9,21 @@
 //! ## Architecture
 //!
 //! ```text
-//! foundation/     Traits: Category, Functor, NatTrans
+//! foundation/     Traits: Category, Functor, NatTrans, MonoidalCategory, Braided, Symmetric
 //! primitive/      The ONE primitive: Kan extensions
 //! collapse/       Every classical concept derived from primitive
+//!                 Free categories, pullbacks, spans
 //! effect/         Cats-Effect/ZIO-style runtime built on collapse
 //! ```
 //!
-//! The `effect` layer is why this crate exists: it provides a practical
-//! effect system whose design is *justified* by the categorical collapses
-//! underneath.  IO, Resource, Fiber, and Stream are all specific Kan
-//! extensions.
+//! The `effect` layer provides a practical effect system whose design is
+//! *justified* by the categorical collapses underneath.  IO, Resource,
+//! Fiber, and Stream are all specific Kan extensions.
+//!
+//! The `foundation` monoidal hierarchy and `collapse` free category /
+//! span / pullback modules provide the infrastructure for building
+//! compositional ZK proof systems (e.g. halo2-style circuit categories)
+//! on top of this crate.
 
 pub mod foundation;
 pub mod primitive;

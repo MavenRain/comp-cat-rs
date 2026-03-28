@@ -8,7 +8,7 @@ The categorical foundations are formalized and proved in [comp-cat-theory](https
 
 ```toml
 [dependencies]
-comp-cat-rs = "0.2"
+comp-cat-rs = "0.3"
 ```
 
 ## Quick start

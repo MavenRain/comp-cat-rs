@@ -11,6 +11,9 @@
 //! Resource      -> Bracket    -> Adjunction -> Kan
 //! Fiber         -> Free Monad -> Kan
 //! Stream        -> Colimit    -> Left Kan Extension
+//! Free Category -> Left Adjoint (Free ⊣ Forgetful) -> Left Kan Extension
+//! Pullback      -> Limit      -> Right Kan Extension
+//! Span Comp     -> Pullback   -> Right Kan Extension
 //! ```
 //!
 //! In the Lean 4 spec, each collapse is a fully proved theorem.
@@ -19,3 +22,6 @@
 
 pub mod adjunction;
 pub mod monad_is_kan;
+pub mod free_category;
+pub mod limit;
+pub mod span;
