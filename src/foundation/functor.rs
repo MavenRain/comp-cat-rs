@@ -19,5 +19,5 @@ use super::kind::Kind;
 /// Extends `Kind` with the morphism action.
 pub trait Functor: Kind {
     /// Apply a function inside the functor context.
-    fn map<A: 'static, B: 'static>(fa: Self::F<A>, f: impl FnOnce(A) -> B + 'static) -> Self::F<B>;
+    fn map<A: Send + 'static, B: Send + 'static>(fa: Self::F<A>, f: impl FnOnce(A) -> B + Send + 'static) -> Self::F<B>;
 }

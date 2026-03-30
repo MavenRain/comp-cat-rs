@@ -28,16 +28,16 @@ use super::io::Io;
 /// The acquire and release operations are `Io` computations,
 /// ensuring they compose with the rest of the effect system.
 pub struct Resource<E, A> {
-    acquire: Box<dyn FnOnce() -> Io<E, A>>,
-    release: Box<dyn FnOnce(A) -> Io<E, ()>>,
+    acquire: Box<dyn FnOnce() -> Io<E, A> + Send>,
+    release: Box<dyn FnOnce(A) -> Io<E, ()> + Send>,
 }
 
-impl<E: 'static, A: 'static> Resource<E, A> {
+impl<E: Send + 'static, A: Send + 'static> Resource<E, A> {
     /// Create a resource from acquire and release operations.
     #[must_use]
     pub fn make(
-        acquire: impl FnOnce() -> Io<E, A> + 'static,
-        release: impl FnOnce(A) -> Io<E, ()> + 'static,
+        acquire: impl FnOnce() -> Io<E, A> + Send + 'static,
+        release: impl FnOnce(A) -> Io<E, ()> + Send + 'static,
     ) -> Self {
         Self {
             acquire: Box::new(acquire),
@@ -49,9 +49,9 @@ impl<E: 'static, A: 'static> Resource<E, A> {
     ///
     /// This is the bracket pattern: `acquire >>= (\a -> use(a) <* release(a))`.
     #[must_use]
-    pub fn use_resource<B: 'static>(
+    pub fn use_resource<B: Send + 'static>(
         self,
-        body: impl FnOnce(&A) -> Io<E, B> + 'static,
+        body: impl FnOnce(&A) -> Io<E, B> + Send + 'static,
     ) -> Io<E, B> {
         (self.acquire)().flat_map(move |a| {
             // Run the body, then release regardless of outcome.

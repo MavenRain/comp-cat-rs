@@ -28,12 +28,12 @@ pub trait Monad: Functor {
     /// Lift a pure value into the monadic context.
     ///
     /// Categorically: the unit `η : Id -> T` of the monad.
-    fn pure<A: 'static>(a: A) -> Self::F<A>;
+    fn pure<A: Send + 'static>(a: A) -> Self::F<A>;
 
     /// Sequence two computations, feeding the result of the
     /// first into a function that produces the second.
     ///
     /// Categorically: the Kleisli composition, derived from
     /// the multiplication `μ : T² -> T` of the monad.
-    fn flat_map<A: 'static, B: 'static>(fa: Self::F<A>, f: impl FnOnce(A) -> Self::F<B> + 'static) -> Self::F<B>;
+    fn flat_map<A: Send + 'static, B: Send + 'static>(fa: Self::F<A>, f: impl FnOnce(A) -> Self::F<B> + Send + 'static) -> Self::F<B>;
 }

@@ -9,7 +9,7 @@
 //! The representation is pull-based: each stream is a suspended
 //! `Io` that yields either `None` (done) or `Some((value, rest))`.
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 use super::io::Io;
 use crate::foundation::Kind;
@@ -27,17 +27,17 @@ impl<E: 'static> Kind for StreamK<E> {
 type Step<E, A> = Io<E, Option<(A, Stream<E, A>)>>;
 
 /// The step function type for `Stream::unfold`.
-type UnfoldFn<E, A, S> = Rc<dyn Fn(S) -> Io<E, Option<(A, S)>>>;
+type UnfoldFn<E, A, S> = Arc<dyn Fn(S) -> Io<E, Option<(A, S)>> + Send + Sync>;
 
 /// An effectful stream producing values of type `A`.
 ///
 /// Pull-based: each step is an `Io` that produces either
 /// the next value and the rest of the stream, or `None`.
 pub struct Stream<E, A> {
-    step: Box<dyn FnOnce() -> Step<E, A>>,
+    step: Box<dyn FnOnce() -> Step<E, A> + Send>,
 }
 
-impl<E: 'static, A: 'static> Stream<E, A> {
+impl<E: Send + 'static, A: Send + 'static> Stream<E, A> {
     /// An empty stream.
     #[must_use]
     pub fn empty() -> Self {
@@ -70,11 +70,11 @@ impl<E: 'static, A: 'static> Stream<E, A> {
     /// The step function returns `None` to end the stream, or
     /// `Some((value, next_state))` to emit and continue.
     #[must_use]
-    pub fn unfold<S: 'static>(
+    pub fn unfold<S: Send + 'static>(
         init: S,
         step: UnfoldFn<E, A, S>,
     ) -> Self {
-        let step_clone = Rc::clone(&step);
+        let step_clone = Arc::clone(&step);
         Self {
             step: Box::new(move || {
                 step(init).map(move |opt| {
@@ -94,8 +94,8 @@ impl<E: 'static, A: 'static> Stream<E, A> {
 
     /// Apply a function to each element.
     #[must_use]
-    pub fn map<B: 'static>(self, f: Rc<dyn Fn(A) -> B>) -> Stream<E, B> {
-        let f_clone = Rc::clone(&f);
+    pub fn map<B: Send + 'static>(self, f: Arc<dyn Fn(A) -> B + Send + Sync>) -> Stream<E, B> {
+        let f_clone = Arc::clone(&f);
         Stream {
             step: Box::new(move || {
                 self.pull().map(move |opt| {
@@ -137,7 +137,7 @@ impl<E: 'static, A: 'static> Stream<E, A> {
     ///
     /// This is the primary way to "run" a stream, producing an `Io`.
     #[must_use]
-    pub fn fold<B: 'static>(self, init: B, f: Rc<dyn Fn(B, A) -> B>) -> Io<E, B> {
+    pub fn fold<B: Send + 'static>(self, init: B, f: Arc<dyn Fn(B, A) -> B + Send + Sync>) -> Io<E, B> {
         self.pull().flat_map(move |opt| match opt {
             None => Io::pure(init),
             Some((a, rest)) => {
@@ -150,7 +150,7 @@ impl<E: 'static, A: 'static> Stream<E, A> {
     /// Collect all stream elements into a `Vec`.
     #[must_use]
     pub fn collect(self) -> Io<E, Vec<A>> {
-        self.fold(Vec::new(), Rc::new(|acc, a| {
+        self.fold(Vec::new(), Arc::new(|acc, a| {
             acc.into_iter().chain(std::iter::once(a)).collect()
         }))
     }
